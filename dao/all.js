@@ -530,7 +530,7 @@ const insertOneProfile = async(user_id,fullname) => {
     utype_ = "Newbie"
     const quer = `
     INSERT INTO user_profile (user_id,email,fullname,user_type)
-    VALUES ($1,$2,$3)
+    VALUES ($1,$2,$3,$4)
     RETURNING *
     `
     const para = [user_id,email,fullname,utype_]

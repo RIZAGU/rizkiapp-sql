@@ -31,10 +31,11 @@ const os_ = browser.os;
 const dateNow_ = moment().format("L");
 const dateWeek_ = moment().subtract(7, "days").format("L");
 const timeNow_ = moment().format("LT");
-const base_url_ = "/app/";
+const base_url_ = "http://localhost:3000";
+//const base_url_ = "/app/";
 //const base_url_ = "/rizkiapp-1bd29/us-central1/app/";
 //const base_url_ = "/"
-const base_urls_ = "https://us-central1-rizkiapp-1bd29.cloudfunctions.net/app";
+//const base_urls_ = "https://us-central1-rizkiapp-1bd29.cloudfunctions.net/app";
 //const base_urls_ = "http://localhost:5000/rizkiapp-1bd29/us-central1/app";
 
 
@@ -479,6 +480,7 @@ const postAuth = async(req, res) => {
         const {email,password,confirmpassword,firstname, lastname} = req.body;
         email_ = email;
         pass_ = password;
+        confirm_ = confirmpassword;
         pass_ = crypto.createHash('md5').update(pass_).digest('hex');
         confirm_ = crypto.createHash('md5').update(confirm_).digest('hex');
         fullname_ = firstname+" "+lastname;
@@ -548,6 +550,7 @@ const postAuth = async(req, res) => {
           };
         };
       } catch (error) {
+        console.log(error);
         if(_a == "signup_email")
         {
           a_ = "signup_ees";
@@ -775,7 +778,7 @@ const getSendmailotp = async(req,res) => {
     if (Object.keys(em).length > 0)
     {
       token_ = JSON.stringify(em).substring(18).slice(0,-3);
-      res.redirect('https://aidiacreative.com/api?x=sendmail&a='+_a+'&b='+base_url_+'/sendotp/'+_a+'&token='+token_+'&tokens=7892108421847');
+      res.redirect('https://aidiacreative.com/api?x=sendmail&a='+_a+'&b='+base_url_+'/sendotp/'+_a+'&c='+base_url_+'/activate/'+a_+'&token='+token_+'&tokens=7892108421847');
     } else {
       res.redirect('/');
     };
@@ -783,13 +786,57 @@ const getSendmailotp = async(req,res) => {
 };
 
 const getResendotp = async(req, res) => {
+  a_ = req.params.a;
+  const getemail = `
+    SELECT sessionid FROM user_login WHERE status = 'login' and login_id in (select max(login_id) from user_login where ip = $1 and browser = $2 and version = $3 and os = $4) 
+    `;
+  const param = [ipadd_,browser_,bversion_,os_];
+  const em = await (await db.query(getemail, param)).rows;
+
+  if (Object.keys(em).length > 0)
+  {
+    sid_ = JSON.stringify(em);
+    sid_ = sid_.substring(15).slice(0,-3);
+    console.log(sid_);
+    if (req.session.views) {
+      req.session.views++;
+      req.session.cookie.maxAge * 100000000;
+    } else {
+      req.session.views = 1;
+    }
+    req.session.id = sid_;
+    req.session.sid = sid_;
+    minute_ = 600000000000;
+    res.cookie('sid', sid_, { maxAge: minute_ });
+    res.redirect('/');
+  } else 
+  {
+    c_ = "sign";
+    const _a = await allDAO.checkHash(c_,a_);
+    const getemail = `
+      SELECT verified_otp FROM user_profile WHERE email = $1
+      `;
+    const param = [_a];
+    const em = await (await db.query(getemail, param)).rows;
+
+    if (Object.keys(em).length > 0)
+    {
+      token_ = JSON.stringify(em).substring(18).slice(0,-3);
+      res.redirect('https://aidiacreative.com/api?x=sendmail&a='+_a+'&b='+base_url_+'/sendotp/'+_a+'&c='+base_url_+'/activate/'+a_+'&token='+token_+'&tokens=7892108421847');
+    } else {
+      res.redirect('/');
+    };
+  }; 
+};
+
+const getVerified = async(req,res)=> {
   a = req.params.a;
   const getemail = `
     SELECT sessionid FROM user_login WHERE status = 'login' and login_id in (select max(login_id) from user_login where ip = $1 and browser = $2 and version = $3 and os = $4) 
     `;
   const param = [ipadd_,browser_,bversion_,os_];
   const em = await (await db.query(getemail, param)).rows;
-  
+
   if (Object.keys(em).length > 0)
   {
     if (req.session.views) {
@@ -798,20 +845,60 @@ const getResendotp = async(req, res) => {
     } else {
       req.session.views = 1;
     };
-    req.session.id = sid_;
-    req.session.sid = sid_;
+    req.session.id = em;
+    req.session.sid = em;
     minute_ = 600000000000;
-    res.cookie('sid', sid_, { maxAge: minute_ });
+    res.cookie('sid', em, { maxAge: minute_ });
     res.redirect('/');
   } else 
   {
-    a_ = "signup_otp"+a;
-    route_ = "sign";
-    _a = crypto.createHash('md5').update(a_).digest('hex');
-    await allDAO.insertHash(route_,a_,_a);
-    res.redirect('/sign/'+_a);
-  };  
-};
+    c_ = "sign";
+    const _a = await allDAO.checkHash(c_,a);
+    const getemail = `
+      SELECT verified_otp FROM user_profile WHERE email = $1
+      `;
+    const param = [_a];
+    const ems = await (await db.query(getemail, param)).rows;
+
+    if (Object.keys(ems).length > 0)
+    {
+      //console.log(ems);
+      //token_ = JSON.stringify(ems).substring(18).slice(0,-3);
+      console.log(_a);
+      
+      await allDAO.updateVerified(_a);
+      email_ = _a;
+      let text1 = Math.floor(Math.random() * 9);
+      let int1 = text1.toString();
+      let text2 = Math.floor(Math.random() * 9);
+      let int2 = text2.toString();
+      let text3 = Math.floor(Math.random() * 9);
+      let int3 = text3.toString();
+      let text4 = Math.floor(Math.random() * 9);
+      let int4 = text4.toString();
+      let text5 = Math.floor(Math.random() * 9);
+      let int5 = text5.toString();
+      let text6 = Math.floor(Math.random() * 9);
+      let int6 = text6.toString();
+      let _otp = int1 + int2 + int3 + int4 + int5 + int6;
+      _sid = JSON.stringify(_otp).substring(1).slice(0,-1);
+      route_ = "sid";
+      sid_ = crypto.createHash('md5').update(_sid).digest('hex');
+      func_ = "login";
+      await allDAO.insertHash(route_,_sid,sid_);
+      await allDAO.insertActUser(email_,sid_,ipadd_,browser_,bversion_,os_);
+      req.session.sid = sid_;
+      res.redirect('/dash/dashboard');
+      
+    } else {
+      a_ = "signup_otp"+a;
+      route_ = "sign";
+      _a = crypto.createHash('md5').update(a_).digest('hex');
+      await allDAO.insertHash(route_,a_,_a);
+      res.redirect('/sign/'+_a);
+    }
+  }
+}
 
 const getSendotp = async(req, res) => {
   a = req.params.a;
@@ -1074,6 +1161,7 @@ const getDash = async(req,res) => {
     const _email = await allDAO.findEmailSession(sid_);
     email_ = JSON.stringify(_email);
     email_ = email_.substring(10).slice(0,-2);
+    console.log(email_);
     const _fullname = await allDAO.findFullnameProfile(email_);
     fullname_ = JSON.stringify(_fullname);
     fullname_ = fullname_.substring(13).slice(0,-2);
@@ -1447,6 +1535,7 @@ module.exports = {
     getSendmailotp,
     getResendotp,
     getSendotp,
+    getVerified,
     postForgot,
     getSendforgototp,
     getForgototp,

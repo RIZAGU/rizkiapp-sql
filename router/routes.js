@@ -14,6 +14,7 @@ router.get("/sendggl/:a", controller.getSendGoogle);
 router.get("/sendmailotp/:a", controller.getSendmailotp);
 router.get("/resendotp/:a", controller.getResendotp);
 router.get("/sendotp/:a", controller.getSendotp);
+router.get("/activate/:a", controller.getVerified);
 router.post("/forgot/:a",dataValidator.email, controller.postForgot);
 router.get("/sendforgototp/:a", controller.getSendforgototp);
 router.get("/forgototp/:a", controller.getForgototp);
