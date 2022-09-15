@@ -1,0 +1,35 @@
+{
+  "name": "members",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rizki",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
+    "crypto": "^1.0.1",
+    "detect-browser": "^5.3.0",
+    "dotenv": "^16.0.2",
+    "ejs": "^3.1.8",
+    "email-validator": "^2.0.4",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2",
+    "gcp-metadata": "^5.0.0",
+    "google-auth-library": "^8.5.1",
+    "ip": "^1.1.8",
+    "moment": "^2.29.4",
+    "nodemailer": "^6.7.8",
+    "nodemon": "^2.0.19",
+    "passport": "^0.6.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth": "^2.0.0",
+    "pg": "^8.8.0",
+    "smtp-server": "^3.11.0"
+  }
+}

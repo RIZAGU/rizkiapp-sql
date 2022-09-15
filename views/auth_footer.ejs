@@ -1,0 +1,50 @@
+<!--begin::Javascript-->
+<!--begin::Global Javascript Bundle(used by all pages)-->
+<script src="https://aidiacreative.com/Templates/rizagu/sign/dist/assets/plugins/global/plugins.bundle.js"></script>
+<script src="https://aidiacreative.com/Templates/rizagu/sign/dist/assets/js/scripts.bundle.js"></script>
+<!--end::Global Javascript Bundle-->
+<!--begin::Custom Javascript(used by this page)-->
+<!--<script src="/sign/dist/assets/js/custom/authentication/sign-up/general.js?v4"></script>-->
+<% if (divsign == "signup") {%>
+<script src="https://aidiacreative.com/Templates/rizagu/sign/custom/signup.js?v7"></script>
+<% } else if(divsign == "signin") {%>
+<script src="https://aidiacreative.com/Templates/rizagu/sign/custom/signin.js?v5"></script>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#check').click(function(){
+		 
+			$(this).is(':checked') ? $('#password').attr('type', 'text') : $('#password').attr('type', 'password');
+		});
+	});
+</script>
+<% } else if(divsign == "forgot") { %>
+    <% if(a == "email") { %>
+        <script src="https://aidiacreative.com/Templates/rizagu/sign/custom/forgot_email.js?v2"></script>
+    <% } else if(a == "pass") { %>
+        <script src="https://aidiacreative.com/Templates/rizagu/sign/custom/forgot_pass.js?v0"></script>
+    <% } %>
+<% } %>
+<script src="https://aidiacreative.com/Templates/rizagu/sign/dist/assets/js/custom/authentication/sign-in/i18n.js"></script>
+<!--end::Custom Javascript-->
+<!--end::Javascript-->
+<% if(a == "sendmail") {%>
+<script>
+    function sendEmail() {
+	Email.send({
+	Host: "ssl://srv35.niagahoster.com",
+    Port: 465,
+	Username : "no-reply@aidiacreative.com",
+	Password : "NoReplyAICJkT2020",
+	To : "<%=e%>",
+	From : "no-reply@aidiacreative.com",
+	Subject : "Verify your account",
+	Body : "Thank you for you join with rizki sites, your account not verified. Please do not share your token with everyone. Your token otp is <%=er%> ",
+	}).then(
+		message => alert("mail sent successfully")
+	);
+}
+</script>
+<% } %>
+</body>
+<!--end::Body-->
+</html>
